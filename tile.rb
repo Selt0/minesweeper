@@ -43,7 +43,7 @@ class Tile
   end
 
   def neighbors_bomb_count
-    neighbors.select(&:bombed).count
+    neighbors.select(&:bombed?).count
   end
 
   def explore
@@ -77,7 +77,7 @@ class Tile
     elsif explored?
       neighbors_bomb_count == 0 ? "_" : neighbors_bomb_count.to_s
     else
-      :B
+      "_"
     end
   end
 

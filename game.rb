@@ -8,10 +8,26 @@ class Minesweeper
     large: {grid_size: 32, num_bombs: 160}
 }.freeze
 
+  attr_reader :board
 
   def initialize(size)
     layout = LAYOUTS[size]
     @board = Board.new(layout[:grid_size], layout[:num_bombs])
+  end
+
+  def play
+    until board.won? || board.lost?
+      puts board.render
+
+      action, pos = get_move
+      perform_move(action, pos)
+    end
+    if board.won?
+      puts "You win!"
+    elsif board.lost?
+      puts "BOMB HIT! Boooom :("
+      puts board.reveal
+    end
   end
 
   def get_pos
@@ -60,12 +76,5 @@ class Minesweeper
 
   def valid_val?(val)
     val.is_a?(String) && val.length == 1 && (val == 'f' || val == 'r')
-  end
-
-  def run
-    play_turn until game_over?
-    board.render
-    pos = get_pos
-    val = get_val
   end
 end

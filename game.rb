@@ -83,3 +83,12 @@ class Minesweeper
     File.write(filename, YAML.dump(self))
   end
 end
+
+if $PROGRAM_NAME == __FILE__
+  case ARGV.count
+  when 0
+    Minesweeper.new.play
+  when 1
+    YAML.load_file(ARGV.shift).play
+  end
+end

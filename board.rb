@@ -1,3 +1,4 @@
+require 'byebug'
 require_relative "tile"
 
 class Board
@@ -15,11 +16,14 @@ class Board
   end
 
   def render(reveal = false)
-    @grid.map do |row|
-      row.map do |tile|
-        reveal ? tile.reveal : title.render
-      end.join("")
+     rendered = @grid.map.with_index do |row,idx|
+       row.map do |tile|
+        reveal ? tile.reveal : tile.render
+      end.join(' ')
     end.join("\n")
+    puts "  #{(0..8).to_a.join(' ')}"
+    rendered.each_line.with_index{ |row, idx| puts "#{idx} #{row}" }
+    puts
   end
 
   def reveal

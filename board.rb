@@ -1,4 +1,3 @@
-require 'byebug'
 require_relative "tile"
 
 class Board
@@ -23,7 +22,7 @@ class Board
     end.join("\n")
     puts "  #{(0..8).to_a.join(' ')}"
     rendered.each_line.with_index{ |row, idx| puts "#{idx} #{row}" }
-    puts
+    return
   end
 
   def reveal

@@ -50,6 +50,7 @@ class Minesweeper
       puts "Action moves: "
       puts "'e' to explore"
       puts "'f' to flag"
+      puts "'s' to save"
       puts
       print "> "
   end
@@ -69,7 +70,16 @@ class Minesweeper
     when 'f'
       tile.toggle_flag
     when  'e'
-      tile.explore   
+      tile.explore
+    when 's'
+      save   
     end
+  end
+
+  def save
+    puts "Enter filename to save at: "
+    filename = gets.chomp
+
+    File.write(filename, YAML.dump(self))
   end
 end

@@ -1,7 +1,12 @@
+require_relative "tile"
+
 class Board
-  attr_reader :grid
-  def initialize
-    @grid = Array.new(9) { Array.new(9, '_') }
+  attr_reader :grid_size, :num_bombs, :grid
+
+  def initialize(grid_size, num_bombs)
+    @grid_size, @num_bombs = grid_size, num_bombs
+
+    generate_board
   end
 
   def [](pos)
@@ -9,45 +14,46 @@ class Board
     grid[x][y]
   end
 
-  def []=(pos, value)
-    x,y = pos
-    grid[x][y] = value
-  end
-
-  def place_random_bombs
-    total_bombs = 10
-    while self.num_bombs < total_bombs
-      rand_row = rand(0...grid.length)
-      rand_col = rand(0...grid.length)
-      pos = [rand_row, rand_col]
-      self[pos] = :B
-    end
-  end
-
-  def num_bombs
-    grid.flatten.count(:B)
-  end
-
-  def render(grid)
-    puts "  #{(0..8).to_a.join(' ')}"
-    grid.each_with_index do |row, i|
-      puts "#{i} #{row.join(' ')}"
-    end
-  end
-
-  def bombs_revealed
-    @grid
-  end
-
-  def hidden_bombs
+  def render(reveal = false)
     @grid.map do |row|
-      row.map do |ele|
-        if ele == :B
-          ele = '_'
-        else
-          ele
-        end
-      end
+      row.map do |tile|
+        reveal ? tile.reveal : title.render
+      end.join("")
+    end.join("\n")
+  end
+
+  def reveal
+    render(true)
+  end
+
+  def won?
+    @grid.flatten.all? { |tile| tile.bombed? != tile.explored?}
+  end
+
+  def lost?
+    @grid.flatten.any? { |tile| tile.bombed? && tile.explored? }
+  end
+
+  private
+
+  def generate_board
+    @grid = Array.new(grid_size) do |row|
+      Array.new(grid_size) { |col| Tile.new(self, [row, col]) }
     end
+    plant_bombs
+  end
+
+  def plant_bombs
+    total_bombs = 0
+    while total_bombs < num_bombs
+      rand_pos = Array.new(2) { rand(grid_size) }
+
+      tile = self[rand_pos]
+      next if tile.bombed?
+      
+      tile.plant_bomb
+      total_bombs += 1
+    end
+    nil
   end
 end

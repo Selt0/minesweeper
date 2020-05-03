@@ -75,7 +75,7 @@ class Tile
     if flagged?
       "F"
     elsif explored?
-      neighbors_bomb_count == 0 ? "_" : neighbors_bomb_count.to_s
+      neighbors_bomb_count == 0 ? " " : neighbors_bomb_count.to_s
     else
       "_"
     end
@@ -90,7 +90,7 @@ class Tile
       explored? ? "X" : :B
     else 
       #display numbers if near bomb
-      neighbors_bomb_count == 0 ? "_" : neighbors_bomb_count.to_s
+      neighbors_bomb_count == 0 ? " " : neighbors_bomb_count.to_s
     end
   end
 

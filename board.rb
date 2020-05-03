@@ -1,5 +1,3 @@
-require_relative 'tile'
-
 class Board
   attr_reader :grid
   def initialize
@@ -52,5 +50,4 @@ class Board
       end
     end
   end
-
 end

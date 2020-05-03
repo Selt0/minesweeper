@@ -1,34 +1,101 @@
 
 class Tile
-  attr_reader :value
+  NEIGHBORS = [
+    [-1, -1],
+    [-1,  0],
+    [-1,  1],
+    [0,  -1],
+    [0,   1],
+    [1,  -1],
+    [1,   0],
+    [1,   1]
+].freeze
 
-  def initialize(value = ' ')
-    @value = value
-    @reveal = false
-    @flagged = false
+  attr_reader :pos
+
+  def initialize(board, pos)
+    @board, @pos = board, pos
+    @bombed, @explored, @flagged = false, false, false
   end
 
   def bombed?
-    value == :B
+    @bombed
   end
 
-  def revealed?
-    @reveal
-  end
-
-  def reveal
-    @reveal = true
+  def explored?
+    @explored
   end
 
   def flagged?
     @flagged
   end
 
-  def flag
-    @flagged = true
+  def neighbors
+    adjacent_coords = NEIGHBORS.map do |(dx, dy)|
+      [pos[0] + dx, pos[1] + dy]
+    end.select do |row, col|
+      [row, col].all? do |coord|
+        coord.between?(0, @board.grid_size - 1)
+      end
+    end
+
+    adjacent_coords.map { |pos| @board[pos] }
   end
 
-  def empty?
-    @value == ' '
+  def neighbors_bomb_count
+    neighbors.select(&:bombed).count
+  end
+
+  def explore
+    #don't reveal a flagged tile
+    return self if flagged?
+    #don't reveal an already revealed tile
+    return self if explored?
+
+    @explored = true
+    if !bombed? && neighbors_bomb_count == 0
+      neighbors.each(&:explore)
+    end
+
+    self
+  end
+
+  def inspect
+    { pos: pos,
+    bombed: bombed?,
+    flagged: flagged?,
+    exlpored: explored? }.inspect
+  end
+
+  def plant_bomb
+    @bombed = true
+  end
+
+  def render
+    if flagged?
+      "F"
+    elsif explored?
+      neighbors_bomb_count == 0 ? "_" : neighbors_bomb_count.to_s
+    else
+      :B
+    end
+  end
+
+  def reveal
+    if flagged?
+      #mark true and false flags
+      bombed? ? "F" : 'f'
+    elsif bombed?
+      #mark X if bomb is revealed
+      explored? ? "X" : :B
+    else 
+      #display numbers if near bomb
+      neighbors_bomb_count == 0 ? "_" : neighbors_bomb_count.to_s
+    end
+  end
+
+  def toggle_flag
+    #ignore explored squares
+    @flagged = !@flagged unless @explored
   end
 end

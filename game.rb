@@ -17,15 +17,19 @@ class Minesweeper
 
   def play
     until board.won? || board.lost?
+      puts
       puts board.render
 
       action, pos = get_move
       perform_move(action, pos)
     end
     if board.won?
+      puts
       puts "You win!"
     elsif board.lost?
+      puts
       puts "BOMB HIT! Boooom :("
+      puts
       puts board.reveal
     end
   end

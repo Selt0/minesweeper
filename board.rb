@@ -1,8 +1,9 @@
+require_relative 'tile'
+
 class Board
   attr_reader :grid
   def initialize
     @grid = Array.new(9) { Array.new(9, '_') }
-    bomb = :B
   end
 
   def [](pos)
@@ -51,4 +52,5 @@ class Board
       end
     end
   end
+
 end
